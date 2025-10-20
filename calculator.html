@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Scientific Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .calculator {
+            background-color: #333;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            width: 320px;
+        }
+        .display {
+            background-color: #222;
+            color: #fff;
+            font-size: 24px;
+            text-align: right;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            height: 40px;
+            overflow: hidden;
+        }
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+        button {
+            background-color: #666;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            padding: 15px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: #888;
+        }
+        button:active {
+            background-color: #555;
+        }
+        .operator {
+            background-color: #f39c12;
+        }
+        .operator:hover {
+            background-color: #e67e22;
+        }
+        .equals {
+            background-color: #27ae60;
+            grid-column: span 2;
+        }
+        .equals:hover {
+            background-color: #2ecc71;
+        }
+        .clear {
+            background-color: #e74c3c;
+        }
+        .clear:hover {
+            background-color: #c0392b;
+        }
+        .scientific {
+            background-color: #9b59b6;
+        }
+        .scientific:hover {
+            background-color: #8e44ad;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="display" id="display">0</div>
+        <div class="buttons">
+            <button class="clear" onclick="clearDisplay()">C</button>
+            <button class="scientific" onclick="appendToDisplay('Math.sin(')">sin</button>
+            <button class="scientific" onclick="appendToDisplay('Math.cos(')">cos</button>
+            <button class="scientific" onclick="appendToDisplay('Math.tan(')">tan</button>
+            <button class="scientific" onclick="appendToDisplay('Math.log10(')">log</button>
+            <button onclick="appendToDisplay('7')">7</button>
+            <button onclick="appendToDisplay('8')">8</button>
+            <button onclick="appendToDisplay('9')">9</button>
+            <button class="operator" onclick="appendToDisplay('/')">/</button>
+            <button class="scientific" onclick="appendToDisplay('Math.sqrt(')">√</button>
+            <button onclick="appendToDisplay('4')">4</button>
+            <button onclick="appendToDisplay('5')">5</button>
+            <button onclick="appendToDisplay('6')">6</button>
+            <button class="operator" onclick="appendToDisplay('*')">*</button>
+            <button class="scientific" onclick="appendToDisplay('Math.pow(')">^</button>
+            <button onclick="appendToDisplay('1')">1</button>
+            <button onclick="appendToDisplay('2')">2</button>
+            <button onclick="appendToDisplay('3')">3</button>
+            <button class="operator" onclick="appendToDisplay('-')">-</button>
+            <button class="scientific" onclick="appendToDisplay('Math.PI')">π</button>
+            <button onclick="appendToDisplay('0')">0</button>
+            <button onclick="appendToDisplay('.')">.</button>
+            <button class="equals" onclick="calculate()">=</button>
+            <button class="operator" onclick="appendToDisplay('+')">+</button>
+            <button class="scientific" onclick="appendToDisplay('Math.E')">e</button>
+        </div>
+    </div>
+
+    <script>
+        let display = document.getElementById('display');
+        let currentInput = '';
+
+        function appendToDisplay(value) {
+            if (currentInput === '0' && value !== '.') {
+                currentInput = value;
+            } else {
+                currentInput += value;
+            }
+            display.textContent = currentInput;
+        }
+
+        function clearDisplay() {
+            currentInput = '';
+            display.textContent = '0';
+        }
+
+        function calculate() {
+            try {
+                // Replace ^ with ** for exponentiation
+                let expression = currentInput.replace(/\^/g, '**');
+                // Handle functions that need closing parentheses
+                expression = expression.replace(/Math\.(sin|cos|tan|log10|sqrt|pow)\(/g, 'Math.$1(');
+                // Ensure parentheses are balanced (simple check)
+                let openParens = (expression.match(/\(/g) || []).length;
+                let closeParens = (expression.match(/\)/g) || []).length;
+                if (openParens > closeParens) {
+                    expression += ')'.repeat(openParens - closeParens);
+                }
+                let result = eval(expression);
+                display.textContent = result;
+                currentInput = result.toString();
+            } catch (error) {
+                display.textContent = 'Error';
+                currentInput = '';
+            }
+        }
+    </script>
+</body>
+</html>
